@@ -6,9 +6,9 @@
       <button [class.active]="activeTab === 'info'" (click)="activeTab = 'info'">
         👤 Student Info
       </button>
-      <button [class.active]="activeTab === 'budget'" (click)="activeTab = 'budget'">
-        💰 Budget
-      </button>
+      <button [class.active]="activeTab === 'budget'" (click)="switchToBudget()">
+  💰 Budget
+    </button>
     </div>
   </div>
 

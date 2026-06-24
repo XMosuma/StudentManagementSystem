@@ -50,18 +50,37 @@ export class StudentDetailComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {}
 
   loadBudget(userId: number) {
-    this.http.get(`http://127.0.0.1:8000/admin/budget/${userId}?month=${this.currentMonth}`).subscribe({
-      next: (data: any) => {
-        this.budget = data;
-        this.cdr.detectChanges();
-        setTimeout(() => {
-          this.initCharts();
-          this.updateCharts();
-        }, 100);
-      },
-      error: (err) => console.error(err)
-    });
-  }
+  this.http.get(`http://127.0.0.1:8000/admin/budget/${userId}?month=${this.currentMonth}`).subscribe({
+    next: (data: any) => {
+      this.budget = data;
+      this.cdr.detectChanges();
+      //wait for tab to render canvas elements
+      setTimeout(() => {
+        this.initCharts();
+        this.updateCharts();
+      }, 300);
+    },
+    error: (err) => console.error(err)
+  });
+}
+
+switchToBudget() {
+  this.activeTab = 'budget';
+  this.cdr.detectChanges();
+  //destroy old charts and reinit
+  setTimeout(() => {
+    if (this.pieChart) {
+      this.pieChart.destroy();
+      this.pieChart = null;
+    }
+    if (this.lineChart) {
+      this.lineChart.destroy();
+      this.lineChart = null;
+    }
+    this.initCharts();
+    this.updateCharts();
+  }, 100);
+}
 
   initCharts() {
     if (this.pieChartRef && !this.pieChart) {

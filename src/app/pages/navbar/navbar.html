@@ -1,7 +1,7 @@
-<nav class="navbar">
+<nav class="navbar" *ngIf="showNavbar">
   <span class="brand">Student Management</span>
   <div class="nav-links">
-    <a routerLink="/students">Students</a>
+    <a *ngIf="role === 'admin'" routerLink="/students">Students</a>
     <button (click)="logout()">Logout</button>
   </div>
 </nav>
