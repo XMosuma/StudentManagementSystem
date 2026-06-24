@@ -1,0 +1,55 @@
+.detail-container {
+  max-width: 700px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+h2 {
+  color: #007bff;
+  margin-bottom: 20px;
+}
+
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 25px;
+}
+
+.detail-table td {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+button.delete {
+  background-color: #dc3545;
+  color: white;
+}
+
+button.delete:hover {
+  background-color: #b02a37;
+}
+
+button.back {
+  background-color: #6c757d;
+  color: white;
+}
+
+button.back:hover {
+  background-color: #565e64;
+}

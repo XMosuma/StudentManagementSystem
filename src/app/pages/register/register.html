@@ -15,6 +15,19 @@
     placeholder="Confirm Password"
     [(ngModel)]="confirmPassword">
   <br><br>
+  <select [(ngModel)]="role">
+    <option value="student">Student</option>
+    <option value="admin">Admin</option>
+  </select>
+  <br><br>
+  <!--only show secret key field if admin is selected -->
+  <div *ngIf="role === 'admin'">
+    <input
+      type="password"
+      placeholder="Admin Secret Key"
+      [(ngModel)]="secretKey">
+    <br><br>
+  </div>
   <button (click)="register()">Register</button>
   <br><br>
   <p>Already have an account? <a routerLink="/">Login</a></p>

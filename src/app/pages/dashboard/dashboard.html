@@ -1,0 +1,242 @@
+<div class="dashboard-wrapper">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h3>👋 {{ username }}</h3>
+    </div>
+    <nav class="sidebar-nav">
+      <button [class.active]="activeSection === 'profile'" (click)="activeSection = 'profile'">
+        👤 Profile
+      </button>
+      <button [class.active]="activeSection === 'topics'" (click)="activeSection = 'topics'">
+        📚 My Topics
+      </button>
+      <button [class.active]="activeSection === 'videos'" (click)="activeSection = 'videos'">
+        🎥 My Videos
+      </button>
+      <button [class.active]="activeSection === 'search'" (click)="activeSection = 'search'">
+        🔍 Search
+      </button>
+    </nav>
+    <button class="logout-btn" (click)="logout()">🚪 Logout</button>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- PROFILE SECTION -->
+    <section *ngIf="activeSection === 'profile'">
+      <h2>My Profile</h2>
+
+      <div *ngIf="!profile && !isEditingProfile" class="empty-state">
+        <p>You haven't completed your profile yet.</p>
+        <button (click)="isEditingProfile = true">Complete Profile</button>
+      </div>
+
+      <div *ngIf="profile && !isEditingProfile" class="profile-card">
+        <table class="info-table">
+          <tr><td><strong>First Name</strong></td><td>{{ profile.firstName }}</td></tr>
+          <tr><td><strong>Last Name</strong></td><td>{{ profile.lastName }}</td></tr>
+          <tr><td><strong>Email</strong></td><td>{{ profile.email }}</td></tr>
+          <tr><td><strong>Age</strong></td><td>{{ profile.age }}</td></tr>
+          <tr><td><strong>Gender</strong></td><td>{{ profile.gender || '—' }}</td></tr>
+          <tr><td><strong>Home Address</strong></td><td>{{ profile.homeAddress || '—' }}</td></tr>
+          <tr><td><strong>Contact Number</strong></td><td>{{ profile.contactNumber || '—' }}</td></tr>
+          <tr><td><strong>Facebook</strong></td><td>{{ profile.facebook || '—' }}</td></tr>
+          <tr><td><strong>Instagram</strong></td><td>{{ profile.instagram || '—' }}</td></tr>
+          <tr><td><strong>LinkedIn</strong></td><td>{{ profile.linkedin || '—' }}</td></tr>
+        </table>
+        <button (click)="isEditingProfile = true">Edit Profile</button>
+      </div>
+
+      <div *ngIf="isEditingProfile" class="form-card">
+        <h3>{{ profile ? 'Edit Profile' : 'Complete Your Profile' }}</h3>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>First Name *</label>
+            <input type="text" [(ngModel)]="profileForm.firstName" placeholder="First Name">
+          </div>
+          <div class="form-group">
+            <label>Last Name *</label>
+            <input type="text" [(ngModel)]="profileForm.lastName" placeholder="Last Name">
+          </div>
+          <div class="form-group">
+            <label>Email *</label>
+            <input type="email" [(ngModel)]="profileForm.email" placeholder="Email">
+          </div>
+          <div class="form-group">
+            <label>Age *</label>
+            <input type="number" [(ngModel)]="profileForm.age" placeholder="Age">
+          </div>
+          <div class="form-group">
+            <label>Gender</label>
+            <select [(ngModel)]="profileForm.gender">
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Home Address</label>
+            <input type="text" [(ngModel)]="profileForm.homeAddress" placeholder="Home Address">
+          </div>
+          <div class="form-group">
+            <label>Contact Number</label>
+            <input type="text" [(ngModel)]="profileForm.contactNumber" placeholder="Contact Number">
+          </div>
+          <div class="form-group">
+            <label>Facebook (optional)</label>
+            <input type="text" [(ngModel)]="profileForm.facebook" placeholder="Facebook URL">
+          </div>
+          <div class="form-group">
+            <label>Instagram (optional)</label>
+            <input type="text" [(ngModel)]="profileForm.instagram" placeholder="Instagram URL">
+          </div>
+          <div class="form-group">
+            <label>LinkedIn (optional)</label>
+            <input type="text" [(ngModel)]="profileForm.linkedin" placeholder="LinkedIn URL">
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button (click)="saveProfile()">Save Profile</button>
+          <button class="cancel" (click)="isEditingProfile = false">Cancel</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY TOPICS SECTION -->
+    <section *ngIf="activeSection === 'topics'">
+      <h2>📚 My Topics</h2>
+
+      <div class="add-topic-row">
+        <input
+          type="text"
+          [(ngModel)]="newTopicName"
+          placeholder="Add a topic e.g. Python, CSS, React"
+          (keyup.enter)="addTopic()">
+        <button (click)="addTopic()">Add Topic</button>
+      </div>
+
+      <div *ngIf="topics.length === 0" class="empty-state">
+        <p>No topics yet. Add a topic to get started!</p>
+      </div>
+
+      <div class="topic-list">
+        <div *ngFor="let topic of topics" class="topic-card">
+          <h4>{{ topic.name }}</h4>
+          <div class="topic-links">
+            <a [href]="topic.youtube_url" target="_blank" class="yt-link">
+              ▶ YouTube
+            </a>
+            <a [href]="topic.w3schools_url" target="_blank" class="w3-link">
+              📖 W3Schools
+            </a>
+          </div>
+          <button class="remove-btn" (click)="deleteTopic(topic.id)">Remove</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- MY VIDEOS SECTION -->
+    <section *ngIf="activeSection === 'videos'">
+      <h2>🎥 My Videos</h2>
+
+      <button (click)="showAddVideo = !showAddVideo">
+        {{ showAddVideo ? 'Cancel' : '+ Add Video' }}
+      </button>
+
+      <div *ngIf="showAddVideo" class="form-card">
+        <div class="form-group">
+          <label>Video Title</label>
+          <input type="text" [(ngModel)]="newVideo.title" placeholder="e.g. Python Full Course">
+        </div>
+        <div class="form-group">
+          <label>YouTube URL</label>
+          <input type="text" [(ngModel)]="newVideo.video_url" placeholder="https://youtube.com/...">
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="newVideo.status">
+            <option value="watching">Watching</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <button (click)="addVideo()">Save Video</button>
+      </div>
+
+      <div *ngIf="videos.length === 0 && !showAddVideo" class="empty-state">
+        <p>No videos tracked yet. Add a video to get started!</p>
+      </div>
+
+      <div class="video-list">
+        <div *ngFor="let video of videos" class="video-card">
+          <div class="video-info">
+            <h4>{{ video.title }}</h4>
+            <a [href]="video.video_url" target="_blank">▶ Watch on YouTube</a>
+          </div>
+          <div class="video-actions">
+            <span class="status-badge" [class.completed]="video.status === 'completed'">
+              {{ video.status === 'completed' ? '✅ Completed' : '👁 Watching' }}
+            </span>
+            <button
+              *ngIf="video.status === 'watching'"
+              (click)="updateVideoStatus(video.id, 'completed')">
+              Mark Complete
+            </button>
+            <button
+              *ngIf="video.status === 'completed'"
+              (click)="updateVideoStatus(video.id, 'watching')">
+              Mark Watching
+            </button>
+            <button class="remove-btn" (click)="deleteVideo(video.id)">Remove</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEARCH SECTION -->
+    <section *ngIf="activeSection === 'search'">
+      <h2>🔍 Search Topics</h2>
+
+      <div class="search-row">
+        <input
+          type="text"
+          [(ngModel)]="searchQuery"
+          placeholder="Search e.g. JavaScript, Machine Learning"
+          (keyup.enter)="search()">
+        <button (click)="search()">Search</button>
+      </div>
+
+      <div *ngIf="searchResults" class="search-results">
+        <h3>Results for "{{ searchResults.query }}"</h3>
+
+        <div class="result-cards">
+          <a [href]="searchResults.youtube" target="_blank" class="result-card yt-card">
+            <span class="icon">▶</span>
+            <div>
+              <h4>YouTube</h4>
+              <p>Watch tutorials on {{ searchResults.query }}</p>
+            </div>
+          </a>
+
+          <a [href]="searchResults.w3schools" target="_blank" class="result-card w3-card">
+            <span class="icon">📖</span>
+            <div>
+              <h4>W3Schools</h4>
+              <p>Read docs and tutorials on {{ searchResults.query }}</p>
+            </div>
+          </a>
+        </div>
+
+        <button class="save-topic-btn" (click)="saveSearchAsTopic()">
+          + Save "{{ searchResults.query }}" to My Topics
+        </button>
+      </div>
+    </section>
+
+  </main>
+</div>

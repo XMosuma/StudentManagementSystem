@@ -23,12 +23,12 @@ export class StudentListComponent implements OnInit {
   loadStudents() {
     this.studentService.getStudents().subscribe({
       next: (data) => {
-        console.log('✅ Students loaded:', data);
+        console.log('Students loaded:', data);
         this.students = data;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('❌ Error:', err);
+        console.error('Error:', err);
       }
     });
   }

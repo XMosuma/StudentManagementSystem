@@ -15,6 +15,8 @@ export class RegisterComponent {
   username = '';
   password = '';
   confirmPassword = '';
+  role = 'student';
+  secretKey = '';
 
   constructor(
     private router: Router,
@@ -32,14 +34,29 @@ export class RegisterComponent {
       return;
     }
 
+    if (this.role === 'admin' && !this.secretKey) {
+      alert('Please enter the admin secret key');
+      return;
+    }
+
     this.http.post('http://127.0.0.1:8000/register', {
       username: this.username,
-      password: this.password
+      password: this.password,
+      role: this.role,
+      secretKey: this.secretKey
     }).subscribe({
-      next: (_response: any) => {
-        alert('Registration Successful Please login');
-        this.router.navigate(['/']);
-      },
+     next: (response: any) => {
+  if (response.error) {
+    alert(response.error);
+    return;
+  }
+  if (response.message === 'Account reactivated successfully') {
+    alert('Your account has been reactivated ✅ Please login');
+  } else {
+    alert('Registration Successful! Please login');
+  }
+  this.router.navigate(['/']);
+},
       error: (err) => {
         alert('Registration failed');
         console.error(err);

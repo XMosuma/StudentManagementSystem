@@ -1,12 +1,7 @@
-<!-- student-list.html -->
 <div class="container">
-
   <h2>Students List</h2>
-
-  <button routerLink="/add-student">Add Student</button>
-
+  <!-- <button routerLink="/add-student">Add Student</button> -->
   <p>Total Students: {{ students.length }}</p>
-  <!-- <p>Debug: {{ students | json }}</p> -->
 
   <table>
     <thead>
@@ -20,9 +15,8 @@
         <th>Actions</th>
       </tr>
     </thead>
-
     <tbody>
-      <tr *ngFor="let student of students">
+      <tr *ngFor="let student of students" class="clickable-row">
         <td>{{ student.id }}</td>
         <td>{{ student.firstName }}</td>
         <td>{{ student.lastName }}</td>
@@ -30,11 +24,11 @@
         <td>{{ student.course }}</td>
         <td>{{ student.age }}</td>
         <td>
+          <button [routerLink]="['/students', student.id]">View</button>
           <button (click)="deleteStudent(student.id)">Delete</button>
           <button [routerLink]="['/edit-student', student.id]">Edit</button>
         </td>
       </tr>
     </tbody>
   </table>
-
 </div>
