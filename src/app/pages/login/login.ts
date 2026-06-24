@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule],
+  imports: [FormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
@@ -26,19 +26,19 @@ export class LoginComponent {
     }).subscribe((response: any) => {
 
       if (response.message) {
-        alert('Login Successful ✅');
+        alert('Login Successful');
 
-        // ✅ store login state
+        //store login state
         localStorage.setItem('isLoggedIn', 'true');
 
         this.router.navigate(['/students']);
 
       } else {
-        alert('Invalid Credentials ❌');
+        alert('Invalid Credentials');
       }
 
     }, error => {
-      alert('Server error ❌');
+      alert('Server error');
       console.error(error);
     });
   }
