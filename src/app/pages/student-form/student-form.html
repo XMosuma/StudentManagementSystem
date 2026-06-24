@@ -1,0 +1,90 @@
+ <!-- student-form.html -->
+ <div class="form-container">
+
+  <h2>{{ isEdit ? 'Edit Student' : 'Add Student' }}</h2>
+
+  <form #form="ngForm" (ngSubmit)="saveStudent(form)">
+
+    <!-- First Name -->
+    <div class="form-group">
+      <label>First Name</label>
+      <input type="text"
+             [(ngModel)]="student.firstName"
+             name="firstName"
+             required
+             #firstName="ngModel">
+
+      <div *ngIf="firstName.invalid && firstName.touched" class="error">
+        First Name is required
+      </div>
+    </div>
+
+    <!-- Last Name -->
+    <div class="form-group">
+      <label>Last Name</label>
+      <input type="text"
+             [(ngModel)]="student.lastName"
+             name="lastName"
+             required
+             #lastName="ngModel">
+
+      <div *ngIf="lastName.invalid && lastName.touched" class="error">
+        Last Name is required
+      </div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email"
+             [(ngModel)]="student.email"
+             name="email"
+             required
+             email
+             #email="ngModel">
+
+      <div *ngIf="email.invalid && email.touched" class="error">
+        <span *ngIf="email.errors?.['required']">Email is required</span>
+        <span *ngIf="email.errors?.['email']">Invalid email format</span>
+      </div>
+    </div>
+
+    <!-- Course -->
+    <div class="form-group">
+      <label>Course</label>
+      <input type="text"
+             [(ngModel)]="student.course"
+             name="course">
+    </div>
+
+    <!-- Age -->
+    <div class="form-group">
+      <label>Age</label>
+      <input type="number"
+             [(ngModel)]="student.age"
+             name="age"
+             required
+             min="1"
+             max="120"
+             #age="ngModel">
+
+      <div *ngIf="age.invalid && age.touched" class="error">
+        <span *ngIf="age.errors?.['required']">Age is required</span>
+        <span *ngIf="age.errors?.['min']">Minimum age is 1</span>
+        <span *ngIf="age.errors?.['max']">Maximum age is 120</span>
+      </div>
+    </div>
+    <!-- Buttons -->
+    <button type="submit" [disabled]="form.invalid">
+      {{ isEdit ? 'Update Student' : 'Add Student' }}
+    </button>
+
+    <button type="button" class="cancel" (click)="goBack()">
+      Cancel
+    </button>
+
+  </form>
+
+</div> 
+
+

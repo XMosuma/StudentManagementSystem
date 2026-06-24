@@ -1,0 +1,40 @@
+<!-- student-list.html -->
+<div class="container">
+
+  <h2>Students List</h2>
+
+  <button routerLink="/add-student">Add Student</button>
+
+  <p>Total Students: {{ students.length }}</p>
+  <!-- <p>Debug: {{ students | json }}</p> -->
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Course</th>
+        <th>Age</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let student of students">
+        <td>{{ student.id }}</td>
+        <td>{{ student.firstName }}</td>
+        <td>{{ student.lastName }}</td>
+        <td>{{ student.email }}</td>
+        <td>{{ student.course }}</td>
+        <td>{{ student.age }}</td>
+        <td>
+          <button (click)="deleteStudent(student.id)">Delete</button>
+          <button [routerLink]="['/edit-student', student.id]">Edit</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</div>

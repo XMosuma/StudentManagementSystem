@@ -1,0 +1,58 @@
+/* Center the page */
+.container {
+  width: 300px;
+  margin: 100px auto;
+  padding: 25px;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+/* Title */
+h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Inputs */
+input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border 0.3s;
+}
+
+/* Input focus effect */
+input:focus {
+  border-color: #007bff;
+}
+
+/* Login button */
+button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+/* Hover effect */
+button:hover {
+  background-color: #0056b3;
+}
+
+.container {
+  transition: transform 0.2s;
+}
+
+.container:hover {
+  transform: scale(1.02);
+}

@@ -1,0 +1,85 @@
+/* Page styling */
+h2 {
+  text-align: center;
+  color: #333;
+}
+
+/* Search box */
+input {
+  width: 250px;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+input:focus {
+  border-color: #007bff;
+}
+
+/* Buttons */
+button {
+  padding: 8px 12px;
+  margin: 5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* Add button */
+button[routerLink] {
+  background-color: #28a745;
+  color: white;
+}
+
+button[routerLink]:hover {
+  background-color: #218838;
+}
+
+/* Delete button */
+button:first-child {
+  background-color: #dc3545;
+  color: white;
+}
+
+button:first-child:hover {
+  background-color: #c82333;
+}
+
+/* Edit button */
+button:last-child {
+  background-color: #007bff;
+  color: white;
+}
+
+button:last-child:hover {
+  background-color: #0056b3;
+}
+
+/* Table styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+}
+
+td {
+  padding: 8px;
+  text-align: center;
+}
+
+/* Zebra rows */
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #ddd;
+}

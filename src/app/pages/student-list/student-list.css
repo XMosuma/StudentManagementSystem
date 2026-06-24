@@ -1,0 +1,89 @@
+/* Page background */
+body {
+  background-color: #f5f6fa;
+  font-family: Arial, sans-serif;
+}
+
+/* Container */
+.container {
+  width: 85%;
+  margin: 40px auto;
+  text-align: center;
+  background: white;
+  /* padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1); */
+}
+
+/* Title */
+h2 {
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-size: 40px;
+  color: #28a745;
+}
+
+/* Add button */
+button[routerLink] {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 15px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button[routerLink]:hover {
+  background-color: #218838;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;  
+}
+
+/* Header */
+th {
+  background-color: #007bff;
+  color: white;
+  padding: 12px;
+}
+
+/* Body cells */
+td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Zebra rows */
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Hover */
+tr:hover {
+  background-color: #ddd;
+}
+
+/* Buttons */
+td button {
+  margin: 4px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+td button:first-child {
+  background-color: #dc3545;
+  color: white;
+}
+
+td button:last-child {
+  background-color: #007bff;
+  color: white;
+}
