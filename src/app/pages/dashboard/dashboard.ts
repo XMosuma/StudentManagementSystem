@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 })
 export class DashboardComponent implements OnInit {
 
-  activeSection = 'profile';
+  activeSection = 'home';
   userId = Number(localStorage.getItem('user_id'));
   username = localStorage.getItem('username');
 
@@ -39,6 +39,11 @@ export class DashboardComponent implements OnInit {
   searchQuery = '';
   searchResults: any = null;
 
+  // Budget summary for home
+  budgetSummary: any = null;
+
+  currentMonth = new Date().toISOString().slice(0, 7);
+
   constructor(
     private http: HttpClient,
     private router: Router,
@@ -49,6 +54,7 @@ export class DashboardComponent implements OnInit {
     this.loadProfile();
     this.loadTopics();
     this.loadVideos();
+    this.loadBudgetSummary();
   }
 
   // =====================
@@ -81,7 +87,7 @@ export class DashboardComponent implements OnInit {
     } else {
       this.http.post(`http://127.0.0.1:8000/students/profile?user_id=${this.userId}`, this.profileForm).subscribe({
         next: () => {
-          alert('Profile created');
+          alert('Profile created ✅');
           this.isEditingProfile = false;
           this.loadProfile();
         },
@@ -184,7 +190,7 @@ export class DashboardComponent implements OnInit {
       youtube: `https://www.youtube.com/results?search_query=${keyword}+tutorial`,
       w3schools: `https://www.w3schools.com/${this.searchQuery.trim().toLowerCase()}/`,
 
-      // =====================
+        // =====================
       // YouTube API
       // =====================
       // apiVideos: [] — populated via YouTube Data API v3
@@ -199,7 +205,24 @@ export class DashboardComponent implements OnInit {
     if (!this.searchQuery.trim()) return;
     this.newTopicName = this.searchQuery;
     this.addTopic();
-    alert(`"${this.searchQuery}" saved to My Topics`);
+    alert(`"${this.searchQuery}" saved to My Topics ✅`);
+  }
+
+  // =====================
+  // BUDGET SUMMARY
+  // =====================
+  loadBudgetSummary() {
+    this.http.get(`http://127.0.0.1:8000/budget/overview/${this.userId}?month=${this.currentMonth}`).subscribe({
+      next: (data: any) => {
+        this.budgetSummary = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  goToBudget() {
+    this.router.navigate(['/budget']);
   }
 
   logout() {

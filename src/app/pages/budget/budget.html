@@ -1,0 +1,170 @@
+<div class="budget-wrapper">
+
+  <!-- HEADER -->
+  <div class="budget-header">
+    <button class="back-btn" (click)="goBack()">← Back to Dashboard</button>
+    <h1>💰 Finance & Budget Planner</h1>
+    <p>{{ currentMonth }}</p>
+  </div>
+
+  <div class="budget-body">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+
+      <!-- STIPEND -->
+      <div class="card">
+        <h3>Monthly Stipend</h3>
+        <div class="stipend-row">
+          <span>R</span>
+          <input type="number" [(ngModel)]="stipend">
+          <button (click)="updateStipend()">Update</button>
+        </div>
+      </div>
+
+      <!-- OVERVIEW -->
+      <div class="card" *ngIf="overview">
+        <h3>Overview</h3>
+        <div class="overview-stats">
+          <div class="ov-stat">
+            <span class="ov-label">Stipend</span>
+            <span class="ov-value green">R{{ overview.stipend }}</span>
+          </div>
+          <div class="ov-stat">
+            <span class="ov-label">Total Spent</span>
+            <span class="ov-value" [class.red]="overview.total_spent > overview.stipend">
+              R{{ overview.total_spent.toFixed(2) }}
+            </span>
+          </div>
+          <div class="ov-stat">
+            <span class="ov-label">Remaining</span>
+            <span class="ov-value" [class.red]="overview.remaining < 0" [class.green]="overview.remaining >= 0">
+              R{{ overview.remaining.toFixed(2) }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Overall progress bar -->
+        <div class="progress-wrap">
+          <div class="progress-fill"
+            [style.width.%]="(overview.total_spent / overview.stipend) * 100"
+            [class.danger]="overview.total_spent / overview.stipend > 0.8"
+            [class.warning]="overview.total_spent / overview.stipend > 0.5 && overview.total_spent / overview.stipend <= 0.8">
+          </div>
+        </div>
+        <p class="progress-label">
+          {{ ((overview.total_spent / overview.stipend) * 100).toFixed(1) }}% of stipend used
+        </p>
+      </div>
+
+      <!-- CATEGORIES -->
+      <div class="card">
+        <div class="card-header-row">
+          <h3>Budget Categories</h3>
+          <button class="small-btn" (click)="showAddCategory = !showAddCategory">
+            {{ showAddCategory ? 'Cancel' : '+ Add' }}
+          </button>
+        </div>
+
+        <div *ngIf="showAddCategory" class="add-form">
+          <input type="text" [(ngModel)]="newCategory.name" placeholder="Category name">
+          <input type="number" [(ngModel)]="newCategory.limit" placeholder="Budget limit (R)">
+          <button (click)="addCategory()">Save</button>
+        </div>
+
+        <div class="category-list">
+          <div *ngFor="let cat of overview?.breakdown" class="category-item">
+            <div class="cat-header">
+              <span class="cat-name">{{ cat.name }}</span>
+              <span class="cat-amounts" [class.exceeded]="cat.exceeded">
+                R{{ cat.spent.toFixed(2) }} / R{{ cat.limit || '∞' }}
+              </span>
+            </div>
+
+            <!-- Progress bar per category -->
+            <div class="progress-wrap" *ngIf="cat.limit > 0">
+              <div class="progress-fill"
+                [style.width.%]="getProgressPercent(cat.spent, cat.limit)"
+                [class.danger]="cat.exceeded"
+                [class.warning]="!cat.exceeded && cat.spent / cat.limit > 0.7">
+              </div>
+            </div>
+
+            <div *ngIf="cat.exceeded" class="exceeded-badge">⚠️ Budget exceeded!</div>
+
+            <!-- Edit limit -->
+            <div *ngIf="editingCategoryId === cat.id" class="edit-limit-row">
+              <input type="number" [(ngModel)]="editLimit" placeholder="New limit">
+              <button (click)="updateLimit(cat.id)">Save</button>
+              <button class="cancel" (click)="editingCategoryId = null">Cancel</button>
+            </div>
+
+            <div class="cat-actions">
+              <button class="small-btn" (click)="editingCategoryId = cat.id; editLimit = cat.limit">
+                Edit Limit
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="right-panel">
+
+      <!-- ADD EXPENSE -->
+      <div class="card">
+        <div class="card-header-row">
+          <h3>Expenses — {{ currentMonth }}</h3>
+          <button class="small-btn" (click)="showAddExpense = !showAddExpense">
+            {{ showAddExpense ? 'Cancel' : '+ Add Expense' }}
+          </button>
+        </div>
+
+        <div *ngIf="showAddExpense" class="add-form">
+          <select [(ngModel)]="newExpense.category_id">
+            <option value="0">Select Category</option>
+            <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.name }}</option>
+          </select>
+          <input type="number" [(ngModel)]="newExpense.amount" placeholder="Amount (R)">
+          <input type="text" [(ngModel)]="newExpense.description" placeholder="Description (optional)">
+          <input type="date" [(ngModel)]="newExpense.date">
+          <button (click)="addExpense()">Save Expense</button>
+        </div>
+
+        <!-- Expense list -->
+        <div *ngIf="expenses.length === 0 && !showAddExpense" class="empty-state">
+          <p>No expenses logged this month.</p>
+        </div>
+
+        <div class="expense-list">
+          <div *ngFor="let expense of expenses" class="expense-item">
+            <div class="expense-info">
+              <span class="expense-cat">{{ expense.category_name }}</span>
+              <span class="expense-desc">{{ expense.description || '—' }}</span>
+              <span class="expense-date">{{ expense.date }}</span>
+            </div>
+            <div class="expense-right">
+              <span class="expense-amount">R{{ expense.amount.toFixed(2) }}</span>
+              <button class="remove-btn" (click)="deleteExpense(expense.id)">✕</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIE CHART -->
+      <div class="card chart-card" *ngIf="overview?.breakdown">
+        <h3>Spending by Category</h3>
+        <canvas #pieChart></canvas>
+      </div>
+
+      <!-- LINE CHART -->
+      <div class="card chart-card" *ngIf="overview?.history">
+        <h3>Monthly Spending History</h3>
+        <canvas #lineChart></canvas>
+      </div>
+
+    </div>
+  </div>
+</div>

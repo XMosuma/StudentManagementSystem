@@ -6,6 +6,9 @@
       <h3>👋 {{ username }}</h3>
     </div>
     <nav class="sidebar-nav">
+      <button [class.active]="activeSection === 'home'" (click)="activeSection = 'home'">
+        🏠 Home
+      </button>
       <button [class.active]="activeSection === 'profile'" (click)="activeSection = 'profile'">
         👤 Profile
       </button>
@@ -18,6 +21,9 @@
       <button [class.active]="activeSection === 'search'" (click)="activeSection = 'search'">
         🔍 Search
       </button>
+      <button (click)="goToBudget()">
+        💰 Budget Planner
+      </button>
     </nav>
     <button class="logout-btn" (click)="logout()">🚪 Logout</button>
   </aside>
@@ -25,15 +31,96 @@
   <!-- MAIN CONTENT -->
   <main class="main-content">
 
+    <!-- HOME SECTION -->
+    <section *ngIf="activeSection === 'home'">
+      <div class="welcome-banner">
+        <h1>Welcome back, {{ username }}! 👋</h1>
+        <p>Here's a summary of your learning and budget progress.</p>
+      </div>
+
+      <div class="stats-grid">
+        <!-- Topics card -->
+        <div class="stat-card" (click)="activeSection = 'topics'">
+          <div class="stat-icon">📚</div>
+          <div class="stat-info">
+            <h3>{{ topics.length }}</h3>
+            <p>Topics Saved</p>
+          </div>
+        </div>
+
+        <!-- Videos card -->
+        <div class="stat-card" (click)="activeSection = 'videos'">
+          <div class="stat-icon">🎥</div>
+          <div class="stat-info">
+            <h3>{{ videos.length }}</h3>
+            <p>Videos Tracked</p>
+          </div>
+        </div>
+
+        <!-- Completed videos -->
+        <div class="stat-card" (click)="activeSection = 'videos'">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <h3>{{ videos.filter(v => v.status === 'completed').length }}</h3>
+            <p>Videos Completed</p>
+          </div>
+        </div>
+
+        <!-- Budget card -->
+        <div class="stat-card" (click)="goToBudget()">
+          <div class="stat-icon">💰</div>
+          <div class="stat-info">
+            <h3>R{{ budgetSummary?.remaining?.toFixed(2) || '7000.00' }}</h3>
+            <p>Budget Remaining</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Budget overview -->
+      <div class="home-section-card" *ngIf="budgetSummary">
+        <h3>💰 Budget Overview — {{ currentMonth }}</h3>
+        <div class="budget-bars">
+          <div class="budget-row">
+            <span>Stipend</span>
+            <span>R{{ budgetSummary.stipend }}</span>
+          </div>
+          <div class="budget-row">
+            <span>Spent</span>
+            <span [class.over]="budgetSummary.total_spent > budgetSummary.stipend">
+              R{{ budgetSummary.total_spent.toFixed(2) }}
+            </span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar"
+              [style.width.%]="(budgetSummary.total_spent / budgetSummary.stipend) * 100"
+              [class.danger]="budgetSummary.total_spent / budgetSummary.stipend > 0.8"
+              [class.warning]="budgetSummary.total_spent / budgetSummary.stipend > 0.5 && budgetSummary.total_spent / budgetSummary.stipend <= 0.8">
+            </div>
+          </div>
+        </div>
+        <button (click)="goToBudget()">View Full Budget →</button>
+      </div>
+
+      <!-- Quick links -->
+      <div class="home-section-card">
+        <h3>🔗 Quick Links</h3>
+        <div class="quick-links">
+          <button (click)="activeSection = 'profile'">👤 My Profile</button>
+          <button (click)="activeSection = 'topics'">📚 My Topics</button>
+          <button (click)="activeSection = 'videos'">🎥 My Videos</button>
+          <button (click)="activeSection = 'search'">🔍 Search Topics</button>
+          <button (click)="goToBudget()">💰 Budget Planner</button>
+        </div>
+      </div>
+    </section>
+
     <!-- PROFILE SECTION -->
     <section *ngIf="activeSection === 'profile'">
       <h2>My Profile</h2>
-
       <div *ngIf="!profile && !isEditingProfile" class="empty-state">
         <p>You haven't completed your profile yet.</p>
         <button (click)="isEditingProfile = true">Complete Profile</button>
       </div>
-
       <div *ngIf="profile && !isEditingProfile" class="profile-card">
         <table class="info-table">
           <tr><td><strong>First Name</strong></td><td>{{ profile.firstName }}</td></tr>
@@ -49,10 +136,8 @@
         </table>
         <button (click)="isEditingProfile = true">Edit Profile</button>
       </div>
-
       <div *ngIf="isEditingProfile" class="form-card">
         <h3>{{ profile ? 'Edit Profile' : 'Complete Your Profile' }}</h3>
-
         <div class="form-grid">
           <div class="form-group">
             <label>First Name *</label>
@@ -100,7 +185,6 @@
             <input type="text" [(ngModel)]="profileForm.linkedin" placeholder="LinkedIn URL">
           </div>
         </div>
-
         <div class="btn-row">
           <button (click)="saveProfile()">Save Profile</button>
           <button class="cancel" (click)="isEditingProfile = false">Cancel</button>
@@ -111,30 +195,21 @@
     <!-- MY TOPICS SECTION -->
     <section *ngIf="activeSection === 'topics'">
       <h2>📚 My Topics</h2>
-
       <div class="add-topic-row">
-        <input
-          type="text"
-          [(ngModel)]="newTopicName"
+        <input type="text" [(ngModel)]="newTopicName"
           placeholder="Add a topic e.g. Python, CSS, React"
           (keyup.enter)="addTopic()">
         <button (click)="addTopic()">Add Topic</button>
       </div>
-
       <div *ngIf="topics.length === 0" class="empty-state">
         <p>No topics yet. Add a topic to get started!</p>
       </div>
-
       <div class="topic-list">
         <div *ngFor="let topic of topics" class="topic-card">
           <h4>{{ topic.name }}</h4>
           <div class="topic-links">
-            <a [href]="topic.youtube_url" target="_blank" class="yt-link">
-              ▶ YouTube
-            </a>
-            <a [href]="topic.w3schools_url" target="_blank" class="w3-link">
-              📖 W3Schools
-            </a>
+            <a [href]="topic.youtube_url" target="_blank" class="yt-link">▶ YouTube</a>
+            <a [href]="topic.w3schools_url" target="_blank" class="w3-link">📖 W3Schools</a>
           </div>
           <button class="remove-btn" (click)="deleteTopic(topic.id)">Remove</button>
         </div>
@@ -144,12 +219,10 @@
     <!-- MY VIDEOS SECTION -->
     <section *ngIf="activeSection === 'videos'">
       <h2>🎥 My Videos</h2>
-
       <button (click)="showAddVideo = !showAddVideo">
         {{ showAddVideo ? 'Cancel' : '+ Add Video' }}
       </button>
-
-      <div *ngIf="showAddVideo" class="form-card">
+      <div *ngIf="showAddVideo" class="form-card" style="margin-top:20px">
         <div class="form-group">
           <label>Video Title</label>
           <input type="text" [(ngModel)]="newVideo.title" placeholder="e.g. Python Full Course">
@@ -167,11 +240,9 @@
         </div>
         <button (click)="addVideo()">Save Video</button>
       </div>
-
       <div *ngIf="videos.length === 0 && !showAddVideo" class="empty-state">
-        <p>No videos tracked yet. Add a video to get started!</p>
+        <p>No videos tracked yet.</p>
       </div>
-
       <div class="video-list">
         <div *ngFor="let video of videos" class="video-card">
           <div class="video-info">
@@ -182,14 +253,10 @@
             <span class="status-badge" [class.completed]="video.status === 'completed'">
               {{ video.status === 'completed' ? '✅ Completed' : '👁 Watching' }}
             </span>
-            <button
-              *ngIf="video.status === 'watching'"
-              (click)="updateVideoStatus(video.id, 'completed')">
+            <button *ngIf="video.status === 'watching'" (click)="updateVideoStatus(video.id, 'completed')">
               Mark Complete
             </button>
-            <button
-              *ngIf="video.status === 'completed'"
-              (click)="updateVideoStatus(video.id, 'watching')">
+            <button *ngIf="video.status === 'completed'" (click)="updateVideoStatus(video.id, 'watching')">
               Mark Watching
             </button>
             <button class="remove-btn" (click)="deleteVideo(video.id)">Remove</button>
@@ -201,19 +268,14 @@
     <!-- SEARCH SECTION -->
     <section *ngIf="activeSection === 'search'">
       <h2>🔍 Search Topics</h2>
-
       <div class="search-row">
-        <input
-          type="text"
-          [(ngModel)]="searchQuery"
+        <input type="text" [(ngModel)]="searchQuery"
           placeholder="Search e.g. JavaScript, Machine Learning"
           (keyup.enter)="search()">
         <button (click)="search()">Search</button>
       </div>
-
       <div *ngIf="searchResults" class="search-results">
         <h3>Results for "{{ searchResults.query }}"</h3>
-
         <div class="result-cards">
           <a [href]="searchResults.youtube" target="_blank" class="result-card yt-card">
             <span class="icon">▶</span>
@@ -222,16 +284,14 @@
               <p>Watch tutorials on {{ searchResults.query }}</p>
             </div>
           </a>
-
           <a [href]="searchResults.w3schools" target="_blank" class="result-card w3-card">
             <span class="icon">📖</span>
             <div>
               <h4>W3Schools</h4>
-              <p>Read docs and tutorials on {{ searchResults.query }}</p>
+              <p>Read docs on {{ searchResults.query }}</p>
             </div>
           </a>
         </div>
-
         <button class="save-topic-btn" (click)="saveSearchAsTopic()">
           + Save "{{ searchResults.query }}" to My Topics
         </button>

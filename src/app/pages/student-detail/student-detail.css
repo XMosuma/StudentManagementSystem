@@ -53,3 +53,134 @@ button.back {
 button.back:hover {
   background-color: #565e64;
 }
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.detail-header h2 {
+  margin: 0;
+  color: #1e293b;
+}
+
+.tab-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.tab-buttons button {
+  padding: 8px 18px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+.tab-buttons button.active {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.budget-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.budget-card h3 {
+  margin: 0 0 15px;
+  color: #1e293b;
+}
+
+.overview-stats {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 15px;
+}
+
+.ov-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ov-label {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.ov-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #1e293b;
+}
+
+.ov-value.green { color: #16a34a; }
+.ov-value.red { color: #dc2626; }
+
+.progress-wrap {
+  background: #e2e8f0;
+  border-radius: 10px;
+  height: 10px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #22c55e;
+  border-radius: 10px;
+  transition: width 0.5s ease;
+}
+
+.progress-fill.warning { background: #f59e0b; }
+.progress-fill.danger { background: #ef4444; }
+
+.progress-label {
+  font-size: 12px;
+  color: #64748b;
+  text-align: right;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.category-item {
+  padding: 10px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.cat-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.cat-name { font-weight: bold; font-size: 14px; }
+.cat-amounts { font-size: 13px; color: #475569; }
+.cat-amounts.exceeded { color: #dc2626; font-weight: bold; }
+.exceeded-badge { font-size: 12px; color: #dc2626; margin-top: 5px; }
+
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.chart-card canvas { max-height: 250px; }
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: #94a3b8;
+}

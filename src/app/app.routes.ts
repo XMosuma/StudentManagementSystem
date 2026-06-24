@@ -5,6 +5,7 @@ import { StudentFormComponent } from './pages/student-form/student-form';
 import { RegisterComponent } from './pages/register/register';
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { StudentDetailComponent } from './pages/student-detail/student-detail';
+import { BudgetComponent } from './pages/budget/budget';
 import { authGuard } from './guards/auth-guard';
 
 export const routes: Routes = [
@@ -15,4 +16,5 @@ export const routes: Routes = [
   { path: 'add-student', component: StudentFormComponent, canActivate: [authGuard] },
   { path: 'edit-student/:id', component: StudentFormComponent, canActivate: [authGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'budget', component: BudgetComponent, canActivate: [authGuard] },
 ];

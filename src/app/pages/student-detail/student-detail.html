@@ -1,21 +1,111 @@
 <div class="detail-container" *ngIf="student">
-  <h2>Student Details</h2>
 
-  <table class="detail-table">
-    <tr><td><strong>ID</strong></td><td>{{ student.id }}</td></tr>
-    <tr><td><strong>First Name</strong></td><td>{{ student.firstName }}</td></tr>
-    <tr><td><strong>Last Name</strong></td><td>{{ student.lastName }}</td></tr>
-    <tr><td><strong>Email</strong></td><td>{{ student.email }}</td></tr>
-    <tr><td><strong>Course</strong></td><td>{{ student.course }}</td></tr>
-    <tr><td><strong>Age</strong></td><td>{{ student.age }}</td></tr>
-    <tr><td><strong>Home Address</strong></td><td>{{ student.homeAddress || '—' }}</td></tr>
-    <tr><td><strong>Contact Number</strong></td><td>{{ student.contactNumber || '—' }}</td></tr>
-    <tr><td><strong>Gender</strong></td><td>{{ student.gender || '—' }}</td></tr>
-    <tr><td><strong>Facebook</strong></td><td>{{ student.facebook || '—' }}</td></tr>
-    <tr><td><strong>Instagram</strong></td><td>{{ student.instagram || '—' }}</td></tr>
-    <tr><td><strong>LinkedIn</strong></td><td>{{ student.linkedin || '—' }}</td></tr>
-  </table>
+  <div class="detail-header">
+    <h2>{{ student.firstName }} {{ student.lastName }}</h2>
+    <div class="tab-buttons">
+      <button [class.active]="activeTab === 'info'" (click)="activeTab = 'info'">
+        👤 Student Info
+      </button>
+      <button [class.active]="activeTab === 'budget'" (click)="activeTab = 'budget'">
+        💰 Budget
+      </button>
+    </div>
+  </div>
 
+  <!-- INFO TAB -->
+  <div *ngIf="activeTab === 'info'">
+    <table class="detail-table">
+      <tr><td><strong>ID</strong></td><td>{{ student.id }}</td></tr>
+      <tr><td><strong>First Name</strong></td><td>{{ student.firstName }}</td></tr>
+      <tr><td><strong>Last Name</strong></td><td>{{ student.lastName }}</td></tr>
+      <tr><td><strong>Email</strong></td><td>{{ student.email }}</td></tr>
+      <tr><td><strong>Course</strong></td><td>{{ student.course || '—' }}</td></tr>
+      <tr><td><strong>Age</strong></td><td>{{ student.age }}</td></tr>
+      <tr><td><strong>Home Address</strong></td><td>{{ student.homeAddress || '—' }}</td></tr>
+      <tr><td><strong>Contact Number</strong></td><td>{{ student.contactNumber || '—' }}</td></tr>
+      <tr><td><strong>Gender</strong></td><td>{{ student.gender || '—' }}</td></tr>
+      <tr><td><strong>Facebook</strong></td><td>{{ student.facebook || '—' }}</td></tr>
+      <tr><td><strong>Instagram</strong></td><td>{{ student.instagram || '—' }}</td></tr>
+      <tr><td><strong>LinkedIn</strong></td><td>{{ student.linkedin || '—' }}</td></tr>
+    </table>
+  </div>
+
+  <!-- BUDGET TAB -->
+  <div *ngIf="activeTab === 'budget'">
+    <div *ngIf="!budget" class="empty-state">
+      <p>This student has no budget data yet.</p>
+    </div>
+
+    <div *ngIf="budget">
+      <!-- Overview -->
+      <div class="budget-card">
+        <h3>Overview — {{ currentMonth }}</h3>
+        <div class="overview-stats">
+          <div class="ov-stat">
+            <span class="ov-label">Stipend</span>
+            <span class="ov-value green">R{{ budget.stipend }}</span>
+          </div>
+          <div class="ov-stat">
+            <span class="ov-label">Total Spent</span>
+            <span class="ov-value" [class.red]="budget.total_spent > budget.stipend">
+              R{{ budget.total_spent.toFixed(2) }}
+            </span>
+          </div>
+          <div class="ov-stat">
+            <span class="ov-label">Remaining</span>
+            <span class="ov-value" [class.red]="budget.remaining < 0" [class.green]="budget.remaining >= 0">
+              R{{ budget.remaining.toFixed(2) }}
+            </span>
+          </div>
+        </div>
+        <div class="progress-wrap">
+          <div class="progress-fill"
+            [style.width.%]="(budget.total_spent / budget.stipend) * 100"
+            [class.danger]="budget.total_spent / budget.stipend > 0.8"
+            [class.warning]="budget.total_spent / budget.stipend > 0.5 && budget.total_spent / budget.stipend <= 0.8">
+          </div>
+        </div>
+        <p class="progress-label">{{ ((budget.total_spent / budget.stipend) * 100).toFixed(1) }}% of stipend used</p>
+      </div>
+
+      <!-- Category breakdown -->
+      <div class="budget-card">
+        <h3>Category Breakdown</h3>
+        <div class="category-list">
+          <div *ngFor="let cat of budget.breakdown" class="category-item">
+            <div class="cat-header">
+              <span class="cat-name">{{ cat.name }}</span>
+              <span class="cat-amounts" [class.exceeded]="cat.exceeded">
+                R{{ cat.spent.toFixed(2) }} / R{{ cat.limit || '∞' }}
+              </span>
+            </div>
+            <div class="progress-wrap" *ngIf="cat.limit > 0">
+              <div class="progress-fill"
+                [style.width.%]="(cat.spent / cat.limit) * 100 > 100 ? 100 : (cat.spent / cat.limit) * 100"
+                [class.danger]="cat.exceeded"
+                [class.warning]="!cat.exceeded && cat.spent / cat.limit > 0.7">
+              </div>
+            </div>
+            <div *ngIf="cat.exceeded" class="exceeded-badge">⚠️ Budget exceeded!</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="charts-row">
+        <div class="budget-card chart-card">
+          <h3>Spending by Category</h3>
+          <canvas #pieChart></canvas>
+        </div>
+        <div class="budget-card chart-card">
+          <h3>Monthly History</h3>
+          <canvas #lineChart></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions -->
   <div class="buttons">
     <button class="delete" (click)="deleteStudent()">Delete Student</button>
     <button class="back" (click)="goBack()">Back to List</button>
